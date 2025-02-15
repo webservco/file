@@ -16,7 +16,10 @@ use function fopen;
 use function fputcsv;
 use function fwrite;
 use function is_array;
+use function is_int;
 use function is_resource;
+use function is_scalar;
+use function is_string;
 use function stream_get_contents;
 
 final class DataCreatorService implements DataCreatorServiceInterface
@@ -46,7 +49,7 @@ final class DataCreatorService implements DataCreatorServiceInterface
          * @psalm-suppress MixedAssignment
          */
         foreach ($iterator as $data) {
-            $this->writeCsvLine($filePointerResource, $data);
+            $this->writeCsvLine($filePointerResource, $this->getProcessedData($data));
         }
 
         return $this->getStreamContents($filePointerResource);
@@ -89,6 +92,48 @@ final class DataCreatorService implements DataCreatorServiceInterface
         }
 
         return $filePointerResource;
+    }
+
+    /**
+     * @return array<int|string, bool|float|int|string|null>
+     */
+    private function getProcessedData(mixed $data): array
+    {
+        if (!is_array($data)) {
+            throw new UnexpectedValueException('Data is not an array.');
+        }
+
+        $result = [];
+
+        /**
+         * Psalm MixedAssignment error.
+         * However $value is indeed mixed.
+         *
+         * @psalm-suppress MixedAssignment
+         */
+        foreach ($data as $key => $value) {
+            $result[$this->getProcessedDataKey($key)] = $this->getProcessedDataValue($value);
+        }
+
+        return $result;
+    }
+
+    private function getProcessedDataKey(mixed $key): int|string
+    {
+        if (is_string($key) || is_int($key)) {
+            return $key;
+        }
+
+        throw new UnexpectedValueException('Unexpected key type.');
+    }
+
+    private function getProcessedDataValue(mixed $value): bool|float|int|string|null
+    {
+        if (is_scalar($value) || $value === null) {
+            return $value;
+        }
+
+        throw new UnexpectedValueException('Unexpected data type.');
     }
 
     /**
@@ -156,24 +201,14 @@ final class DataCreatorService implements DataCreatorServiceInterface
 
     /**
      * @param ?resource $filePointerResource
+     * @param array<int|string, bool|float|int|string|null> $data
      */
-    private function writeCsvLine(mixed $filePointerResource, mixed $data): bool
+    private function writeCsvLine(mixed $filePointerResource, array $data): bool
     {
         if (!is_resource($filePointerResource)) {
             throw new UnexpectedValueException('Not a valid resource.');
         }
 
-        if (!is_array($data)) {
-            throw new UnexpectedValueException('Data is not an array.');
-        }
-        /**
-         * Psalm error: Argument 2 of fputcsv expects array<array-key, Stringable|null|scalar>,
-         * but parent type array<array-key, mixed> provided (see https://psalm.dev/194)
-         *
-         * array check done right above, not sure what else to do
-         *
-         * @psalm-suppress MixedArgumentTypeCoercion
-         */
         $result = fputcsv($filePointerResource, $data, $this->delimiter, $this->enclosure);
         if ($result === false) {
             throw new RuntimeException('Error writing data.');
