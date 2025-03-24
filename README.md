@@ -12,6 +12,12 @@ A PHP component/library for working with files.
 public function createDownloadResponse(FileInterface $file): ResponseInterface 
 ```
 
+### Response\OutputResponseFactory
+
+```php
+public function createOutputResponse(FileInterface $file): ResponseInterface
+```
+
 ### FileFactory
 
 ```php
