@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WebServCo\File\ValueObject;
 
+use Override;
 use Psr\Http\Message\StreamInterface;
 use UnexpectedValueException;
 use WebServCo\File\Contract\FileInterface;
@@ -14,21 +15,25 @@ abstract class AbstractFile implements FileInterface
     {
     }
 
+    #[Override]
     public function getContentType(): string
     {
         return $this->contentType;
     }
 
+    #[Override]
     public function getData(): StreamInterface
     {
         return $this->data;
     }
 
+    #[Override]
     public function getName(): string
     {
         return $this->name;
     }
 
+    #[Override]
     public function getSize(): int
     {
         $size = $this->data->getSize();

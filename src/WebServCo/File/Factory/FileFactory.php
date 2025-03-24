@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WebServCo\File\Factory;
 
 use OutOfBoundsException;
+use Override;
 use Psr\Http\Message\StreamFactoryInterface;
 use WebServCo\File\Contract\FileFactoryInterface;
 use WebServCo\File\Contract\FileInterface;
@@ -18,6 +19,7 @@ final class FileFactory implements FileFactoryInterface
     {
     }
 
+    #[Override]
     public function createFromPath(string $contentType, string $filePath, string $name): FileInterface
     {
         if (!is_readable($filePath)) {
@@ -31,6 +33,7 @@ final class FileFactory implements FileFactoryInterface
         );
     }
 
+    #[Override]
     public function createFromString(string $contentType, string $fileData, string $name): FileInterface
     {
         return new File(

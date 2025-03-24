@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace WebServCo\File\Service\CSV;
 
 use Iterator;
+use Override;
 use RuntimeException;
 use UnexpectedValueException;
 use WebServCo\File\Contract\Service\CSV\DataCreatorServiceInterface;
@@ -29,6 +30,7 @@ final class DataCreatorService implements DataCreatorServiceInterface
     {
     }
 
+    #[Override]
     public function createCsvDataFromIterator(Iterator $iterator, bool $useHeaderLine): string
     {
         $filePointerResource = $this->createFilePointerResource();
