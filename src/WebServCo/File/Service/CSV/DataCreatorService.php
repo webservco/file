@@ -21,6 +21,7 @@ use function is_resource;
 use function is_scalar;
 use function is_string;
 use function stream_get_contents;
+use function strval;
 
 final class DataCreatorService implements DataCreatorServiceInterface
 {
@@ -85,7 +86,7 @@ final class DataCreatorService implements DataCreatorServiceInterface
     private function createFilePointerResource(): mixed
     {
         // temporary file/memory wrapper; if bigger than 5MB will be written to temp file.
-        $filePointerResource = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'r+');
+        $filePointerResource = fopen('php://temp/maxmemory:' . strval(5 * 1024 * 1024), 'r+');
 
         if (!is_resource($filePointerResource)) {
             throw new UnexpectedValueException('Not a valid resource.');
