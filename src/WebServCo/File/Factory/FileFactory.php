@@ -9,7 +9,9 @@ use Override;
 use Psr\Http\Message\StreamFactoryInterface;
 use WebServCo\File\Contract\FileFactoryInterface;
 use WebServCo\File\Contract\FileInterface;
+use WebServCo\File\ValueObject\CSVFile;
 use WebServCo\File\ValueObject\File;
+use WebServCo\File\ValueObject\PdfFile;
 
 use function is_readable;
 
@@ -17,6 +19,22 @@ final class FileFactory implements FileFactoryInterface
 {
     public function __construct(private StreamFactoryInterface $streamFactory)
     {
+    }
+
+    #[Override]
+    public function createCSVFromPath(string $filePath, string $name): FileInterface
+    {
+        if (!is_readable($filePath)) {
+            throw new OutOfBoundsException('File path is not readable.');
+        }
+
+        return new CSVFile($this->streamFactory->createStreamFromFile($filePath), $name);
+    }
+
+    #[Override]
+    public function createCSVFromString(string $fileData, string $name): FileInterface
+    {
+        return new CSVFile($this->streamFactory->createStream($fileData), $name);
     }
 
     #[Override]
@@ -41,5 +59,21 @@ final class FileFactory implements FileFactoryInterface
             $this->streamFactory->createStream($fileData),
             $name,
         );
+    }
+
+    #[Override]
+    public function createPdfFromPath(string $filePath, string $name): FileInterface
+    {
+        if (!is_readable($filePath)) {
+            throw new OutOfBoundsException('File path is not readable.');
+        }
+
+        return new PdfFile($this->streamFactory->createStreamFromFile($filePath), $name);
+    }
+
+    #[Override]
+    public function createPdfFromString(string $fileData, string $name): FileInterface
+    {
+        return new PdfFile($this->streamFactory->createStream($fileData), $name);
     }
 }

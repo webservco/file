@@ -21,11 +21,26 @@ public function createOutputResponse(FileInterface $file): ResponseInterface
 ### FileFactory
 
 ```php
-public function createFromPath(string $contentType, string $filePath, string $name): FileInterface 
+# General
+public function createFromPath(string $contentType, string $filePath, string $name): FileInterface; 
+
+# CSV
+public function createCSVFromPath(string $filePath, string $name): FileInterface;
+
+# PDF
+public function createPdfFromPath(string $filePath, string $name): FileInterface;
+
 ```
 
 ```php
-public function createFromString(string $contentType, string $fileData, string $name): FileInterface 
+# General
+public function createFromString(string $contentType, string $fileData, string $name): FileInterface;
+
+# CSV
+public function createCSVFromString(string $fileData, string $name): FileInterface;
+
+# PDF
+public function createPdfFromString(string $fileData, string $name): FileInterface;
 ```
 
 ---
