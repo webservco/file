@@ -26,7 +26,14 @@ use function strval;
 
 final class DataCreatorService implements DataCreatorServiceInterface
 {
-    public function __construct(private string $delimiter, private string $enclosure)
+    /**
+     * Warning
+     * When escape is set to anything other than an empty string ("") it can result in CSV that is
+     * not compliant with » RFC 4180 or unable to survive a roundtrip through the PHP CSV functions.
+     * The default for escape is "\\" so it is recommended to set it to the empty string explicitly.
+     * The default value will change in a future version of PHP, no earlier than PHP 9.0.
+     */
+    public function __construct(private string $delimiter, private string $enclosure, private string $escape = '')
     {
     }
 
@@ -193,7 +200,13 @@ final class DataCreatorService implements DataCreatorServiceInterface
             throw new UnexpectedValueException('Data is not an array.');
         }
 
-        $result = fputcsv($filePointerResource, array_keys($currentData), $this->delimiter, $this->enclosure);
+        $result = fputcsv(
+            $filePointerResource,
+            array_keys($currentData),
+            $this->delimiter,
+            $this->enclosure,
+            $this->escape,
+        );
 
         if ($result === false) {
             throw new RuntimeException('Error writing data.');
@@ -212,7 +225,7 @@ final class DataCreatorService implements DataCreatorServiceInterface
             throw new UnexpectedValueException('Not a valid resource.');
         }
 
-        $result = fputcsv($filePointerResource, $data, $this->delimiter, $this->enclosure);
+        $result = fputcsv($filePointerResource, $data, $this->delimiter, $this->enclosure, $this->escape);
         if ($result === false) {
             throw new RuntimeException('Error writing data.');
         }
