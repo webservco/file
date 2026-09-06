@@ -70,6 +70,13 @@ public function createDirectoryIfNotExists(string $directory, int $permissions =
 // If directory structure does not exist, it attempts to create it.
 public function writeDataToFilePath(string $data, string $filePath): bool
 ```
+
+### Archive\ZipArchiveService
+
+```php
+public function createZipArchive(FileInterface $file, string $outputDirectory): string;
+```
+
 ---
 
 ## Value object
