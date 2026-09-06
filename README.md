@@ -62,6 +62,14 @@ public function createCsvDataFromIterator(Iterator $iterator, bool $useHeaderLin
 public function createCsvFileFromIterator(string $fileName, Iterator $iterator, bool $useHeaderLine): CSVFile 
 ```
 
+### File\FileService
+
+```php
+public function createDirectoryIfNotExists(string $directory, int $permissions = 0755): bool;
+
+// If directory structure does not exist, it attempts to create it.
+public function writeDataToFilePath(string $data, string $filePath): bool
+```
 ---
 
 ## Value object
