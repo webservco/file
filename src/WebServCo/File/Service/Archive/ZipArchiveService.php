@@ -32,6 +32,7 @@ final class ZipArchiveService
         $outputDirectory = rtrim($outputDirectory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $outputFileName = sprintf('%s.%s', $file->getName(), self::FILE_EXTENSION);
 
+        $file->getData()->rewind();
         $fileContents = $file->getData()->getContents();
         // Important! Otherwise, the stream body contents can not be retrieved later.
         $file->getData()->rewind();
