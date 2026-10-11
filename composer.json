@@ -20,7 +20,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "description" : "A PHP component/library.",
+    "description" : "A PHP component/library. File value objects, plus CSV and ZIP creation and PSR-7 responses for sending a file to the browser.",
     "homepage" : "https://webserv.co",
     "keywords" : [
         "component",
