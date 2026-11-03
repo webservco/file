@@ -56,6 +56,20 @@ $outputResponseFactory = new OutputResponseFactory($responseFactory);
 return $outputResponseFactory->createOutputResponse($file);
 ```
 
+### Read a CSV file that may start with a byte order mark
+
+```php
+use WebServCo\File\Service\File\ByteOrderMarkService;
+
+$filePointerResource = fopen('/path/to/export.csv', 'r');
+// Skips a UTF-8 byte order mark, if there is one; otherwise the file is read from its start.
+(new ByteOrderMarkService())->skipUtf8ByteOrderMark($filePointerResource);
+while (($line = fgetcsv($filePointerResource, 0, ',', '"', '')) !== false) {
+    // ...
+}
+fclose($filePointerResource);
+```
+
 ---
 
 ## Contracts
@@ -70,6 +84,7 @@ return $outputResponseFactory->createOutputResponse($file);
 | none | `Factory\Response\OutputResponseFactory` | Response that shows the file inline. |
 | none | `Service\Archive\ZipArchiveService` | Zips one file into a directory and returns the archive file name (`{name}.zip`). |
 | none | `Service\File\FileService` | Creates directories and appends data to a file. |
+| none | `Service\File\ByteOrderMarkService` | Skips a UTF-8 byte order mark at the start of an open file, before reading it. |
 
 Namespaces are relative to `WebServCo\File\`.
 
@@ -78,6 +93,8 @@ Namespaces are relative to `WebServCo\File\`.
 ## Notes
 
 CSV data starts with a UTF-8 byte order mark. Excel needs it to show accented characters correctly. The header line comes from the first row's keys. Give every row the same keys.
+
+`fgetcsv` doesn't skip that byte order mark: it stays in the first value, and a quoted first field keeps its quotes. To read such a file back, call `ByteOrderMarkService::skipUtf8ByteOrderMark()` right after opening it. `ByteOrderMarkService::UTF8_BYTE_ORDER_MARK` holds the mark that `DataCreatorService` writes.
 
 ZIP archives are compressed with LZMA2. Some unzip tools, including older built-in ones, can't open them.
 

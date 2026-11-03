@@ -9,9 +9,9 @@ use Override;
 use RuntimeException;
 use UnexpectedValueException;
 use WebServCo\File\Contract\Service\CSV\DataCreatorServiceInterface;
+use WebServCo\File\Service\File\ByteOrderMarkService;
 
 use function array_keys;
-use function chr;
 use function fclose;
 use function fopen;
 use function fputcsv;
@@ -74,8 +74,8 @@ final class DataCreatorService implements DataCreatorServiceInterface
             throw new UnexpectedValueException('Not a valid resource.');
         }
 
-        // Add Byte Order mark (BOM) for UTF-8.
-        $result = fwrite($filePointerResource, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        // Add Byte Order mark (BOM) for UTF-8. A reader skips it with `ByteOrderMarkService`.
+        $result = fwrite($filePointerResource, ByteOrderMarkService::UTF8_BYTE_ORDER_MARK);
         if ($result === false) {
             throw new RuntimeException('Error writing data.');
         }
